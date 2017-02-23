@@ -55,5 +55,13 @@ class Form(Client):
         resp = self._request('GET', params=params)
         return FormResponses(stats=resp.get('stats'), responses=resp.get('responses'), questions=resp.get('questions'))
 
+    def get_response(self, token):
+        responses = self.get_responses(token=token)
+        if len(responses) == 1:
+            return responses[0]
+
+        # TODO: Raise exception?
+        return None
+
     def __repr__(self):
         return 'Form(api_key={api_key!r}, form_id={form_id!r})'.format(api_key=self.api_key, form_id=self.form_id)

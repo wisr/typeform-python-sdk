@@ -4,15 +4,19 @@ from .form_response import FormResponses
 
 
 class Form(Client):
+    """TypeForm Form API client"""
     def __init__(self, api_key, form_id):
+        """Constructor for TypeForm Form API client"""
         super(Form, self).__init__(api_key=api_key)
         self.form_id = form_id
 
     def _request(self, method, params=None):
+        """Helper for making API requests for this form"""
         path = 'form/{form_id}'.format(form_id=self.form_id)
         return super(Form, self)._request(method, path, params=params)
 
     def _get_params(self, **kwargs):
+        """Helper to normalize query string parameters for our request"""
         params = dict()
 
         # Boolean params
@@ -43,6 +47,7 @@ class Form(Client):
         return params
 
     def get_responses(self, token=None, completed=None, since=None, until=None, offset=None, limit=None, order_by=None):
+        """Get a list of responses for this TypeForm Form"""
         params = self._get_params(
             completed=completed,
             limit=limit,
@@ -57,6 +62,7 @@ class Form(Client):
         return FormResponses(stats=resp.get('stats'), responses=resp.get('responses'), questions=resp.get('questions'))
 
     def get_response(self, token):
+        """Get a specific response for this TypeForm Form"""
         responses = self.get_responses(token=token)
         # Check truthy *and* length since this is a class, not a list
         if responses and len(responses) == 1:

@@ -33,13 +33,15 @@ class FormTestCase(TestCase):
         self.assertEqual(len(responses.responses), 1)
         self.assertEqual(len(responses.questions), 2)
 
-        self.assertEqual(responses.questions[0].id, 'email_id')
-        self.assertEqual(responses.questions[0].field_id, 1234)
-        self.assertEqual(responses.questions[0].question, 'What is your email address?')
+        question_by_id = dict((q.id, q) for q in responses.questions)
 
-        self.assertEqual(responses.questions[1].id, 'list_id_choice')
-        self.assertEqual(responses.questions[1].field_id, 56789)
-        self.assertEqual(responses.questions[1].question, 'What do you think of this client?')
+        self.assertEqual(question_by_id['email_id'].id, 'email_id')
+        self.assertEqual(question_by_id['email_id'].field_id, 1234)
+        self.assertEqual(question_by_id['email_id'].question, 'What is your email address?')
+
+        self.assertEqual(question_by_id['list_id_choice'].id, 'list_id_choice')
+        self.assertEqual(question_by_id['list_id_choice'].field_id, 56789)
+        self.assertEqual(question_by_id['list_id_choice'].question, 'What do you think of this client?')
 
         response = responses[0]
         self.assertEqual(response.token, 'test_response_token')

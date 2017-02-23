@@ -1,7 +1,7 @@
 typeform
 ========
 
-API Client for [TypeForm](https://typeform.com/).
+API Client for `TypeForm <https://typeform.com>`_.
 
 At the time of writing this client TypeForm only has a data access API for fetching responses to a given form.
 

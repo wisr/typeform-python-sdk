@@ -2,6 +2,9 @@ import urlparse
 
 import requests
 
+from .errors import (NotAuthorizedException, NotFoundException, InvalidRequestException,
+                     RateLimitException, UnknownException)
+
 
 class Client(object):
     BASE_URL = 'https://api.typeform.com/v1/'
@@ -24,8 +27,27 @@ class Client(object):
 
         resp = self._client.request(method=method, url=url, params=params)
 
-        # TODO: Raise an exception here
-        if resp.status_code != 200:
-            pass
+        if resp.status_code == 500:
+            raise UnknownException('typeform client received 500 response from api')
 
-        return resp.json()
+        try:
+            data = resp.json()
+        except ValueError:
+            raise UnknownException('typeform client could not decode json from response')
+
+        if resp.status_code == 200:
+            return data
+
+        message = data.get('message')
+        if resp.status_code == 404:
+            raise NotFoundException(message)
+        elif resp.status_code == 403:
+            raise NotAuthorizedException(message)
+        elif resp.status_code == 400:
+            raise InvalidRequestException(message)
+        elif resp.status_code == 429:
+            raise RateLimitException(message)
+
+        raise UnknownException(
+            'typeform client received unknown response status code {code!r}'.format(code=resp.status_code)
+        )

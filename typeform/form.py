@@ -1,4 +1,5 @@
 from .client import Client
+from .errors import NotFoundException
 from .form_response import FormResponses
 
 
@@ -57,11 +58,11 @@ class Form(Client):
 
     def get_response(self, token):
         responses = self.get_responses(token=token)
-        if len(responses) == 1:
+        # Check truthy *and* length since this is a class, not a list
+        if responses and len(responses) == 1:
             return responses[0]
 
-        # TODO: Raise exception?
-        return None
+        raise NotFoundException('typeform client could not find response with token {token!r}'.format(token=token))
 
     def __repr__(self):
         return 'Form(api_key={api_key!r}, form_id={form_id!r})'.format(api_key=self.api_key, form_id=self.form_id)

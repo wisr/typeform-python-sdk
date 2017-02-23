@@ -1,7 +1,6 @@
-import urlparse
-
 import requests
 
+from .compat import urlparse
 from .errors import (NotAuthorizedException, NotFoundException, InvalidRequestException,
                      RateLimitException, UnknownException)
 

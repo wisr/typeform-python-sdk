@@ -12,7 +12,7 @@ class Form(Client):
 
     def _request(self, method, params=None):
         """Helper for making API requests for this form"""
-        path = 'form/{form_id}'.format(form_id=self.form_id)
+        path = 'form/{form_id}/responses'.format(form_id=self.form_id)
         return super(Form, self)._request(method, path, params=params)
 
     def _get_params(self, **kwargs):

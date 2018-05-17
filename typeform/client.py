@@ -19,18 +19,21 @@ class Client(object):
             'User-Agent': 'python-typeform/0.1.1',
         }
 
-    def _request(self, method, path, params=None):
+    def _request(self, method, path, params=None, headers=None):
         """Helper method to make requests to the TypeForm API"""
         # Append our API key on to the request params
         if params is None:
             params = dict()
-        params['key'] = self.api_key
+
+        if headers is None:
+            headers = dict()
+        headers['Authorization'] = self.api_key
 
         # Get our full request URI, e.g. `form/abc123` -> `https://api.typeform.com/v1/form/abc123`
         url = urlparse.urljoin(self.BASE_URL, path)
 
         # Make our API request
-        resp = self._client.request(method=method, url=url, params=params)
+        resp = self._client.request(method=method, url=url, params=params, headers=headers)
 
         # On 500 error we don't get JSON, so no reason to even try
         if resp.status_code == 500:

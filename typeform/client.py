@@ -7,7 +7,7 @@ from .errors import (NotAuthorizedException, NotFoundException, InvalidRequestEx
 
 class Client(object):
     """TypeForm API client"""
-    BASE_URL = 'https://api.typeform.com/v1/'
+    BASE_URL = 'https://api.typeform.com/'
 
     def __init__(self, api_key):
         """Constructor for TypeForm API client"""

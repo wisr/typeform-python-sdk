@@ -3,6 +3,7 @@ import requests
 import typing
 
 from .constants import API_BASE_URL
+from .exceptions import TypeFormError
 from .utils import buildUrlWithParams, mergeDict
 
 
@@ -11,24 +12,31 @@ class Client(object):
 
     def __init__(self, token, headers: dict = {}):
         """Constructor for TypeForm API client"""
-        self.__headers = mergeDict({
-            'Content-Type': 'application/json',
-            'Accept': 'application/json',
-            'Authorization': 'bearer %s' % token
-        }, headers)
+        self.__headers = mergeDict(
+            {
+                "Content-Type": "application/json",
+                "Accept": "application/json",
+                "Authorization": "bearer %s" % token,
+            },
+            headers,
+        )
 
-    def request(self, method: str, url: str, data: any = {}, params: dict = {}, headers={}) -> typing.Union[str, dict]:
+    def request(
+        self, method: str, url: str, data: any = {}, params: dict = {}, headers={}
+    ) -> typing.Union[str, dict]:
         requestUrl = buildUrlWithParams((API_BASE_URL + url), params)
         requestHeaders = mergeDict(self.__headers, headers)
-        requestData = ''
+        requestData = ""
 
         if type(data) is dict:
-            requestData = json.dumps(data) if len(data.keys()) > 0 else ''
+            requestData = json.dumps(data) if len(data.keys()) > 0 else ""
 
         if type(data) is list:
-            requestData = json.dumps(data) if len(data) > 0 else ''
+            requestData = json.dumps(data) if len(data) > 0 else ""
 
-        result = requests.request(method, requestUrl, data=requestData, headers=requestHeaders)
+        result = requests.request(
+            method, requestUrl, data=requestData, headers=requestHeaders
+        )
         return self.__validator(result)
 
     def __validator(self, result: requests.Response) -> typing.Union[str, dict]:
@@ -37,11 +45,11 @@ class Client(object):
         except Exception:
             body = {}
 
-        if type(body) is dict and body.get('code', None) is not None:
-            raise Exception(body.get('description'))
+        if type(body) is dict and body.get("code", None) is not None:
+            raise TypeFormError(body)
         elif result.status_code >= 400:
-            raise Exception(result.reason)
+            raise result.raise_for_status()
         elif len(result.text) == 0:
-            return 'OK'
+            return "OK"
         else:
             return body
